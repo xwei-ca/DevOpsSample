@@ -28,10 +28,10 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore
-        run: dotnet restore "app/src/DevOpsSample.Api/DevOpsSample.Api.csproj"
+        run: dotnet restore "../../src/DevOpsSample.Api/DevOpsSample.Api.csproj"
 
       - name: Build
-        run: dotnet build "app/src/DevOpsSample.Api/DevOpsSample.Api.csproj" --no-restore --configuration Release
+        run: dotnet build "../../src/DevOpsSample.Api/DevOpsSample.Api.csproj" --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test "app/tests/DevOpsSample.Api.Tests/DevOpsSample.Api.Tests.csproj" --no-build --configuration Release --verbosity normal
+        run: dotnet test "../../tests/DevOpsSample.Api.Tests/DevOpsSample.Api.Tests.csproj" --no-build --configuration Release --verbosity normal
