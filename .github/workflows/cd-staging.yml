@@ -1,0 +1,48 @@
+name: CD - Staging
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  PROJECT_PATH: 'src/DevOpsSample.Api/DevOpsSample.Api.csproj'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Publish
+        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-staging
+          path: ./publish
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.example.com
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-staging
+          path: ./publish
+
+      - name: Show contents (placeholder for real deployment)
+        run: |
+          echo "Artifact ready for deployment:"
+          ls -la ./publish
+          echo "👉 Replace this step with a real deployment action,"
+          echo "   e.g. azure/webapps-deploy@v3 or docker/build-push-action@v5"

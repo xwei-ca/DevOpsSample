@@ -1,0 +1,50 @@
+name: CD - Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  PROJECT_PATH: 'src/DevOpsSample.Api/DevOpsSample.Api.csproj'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Publish
+        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-prod
+          path: ./publish
+
+  deploy-prod:
+    needs: build
+    runs-on: ubuntu-latest
+    # Configure a "Required reviewers" rule on this environment in
+    # repo Settings → Environments → production to require manual approval.
+    environment:
+      name: production
+      url: https://example.com
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-prod
+          path: ./publish
+
+      - name: Deploy (placeholder)
+        run: |
+          echo "Tag: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "👉 Replace with a real deployment step."
